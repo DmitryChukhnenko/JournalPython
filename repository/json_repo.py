@@ -176,7 +176,6 @@ class ScheduleRepository:
             data: Словарь с данными.
         """
         with open(self._file_path, 'w', encoding='utf-8') as f:
-            print(data)
             json.dump(data, f, ensure_ascii=False, indent=2)
     
     def get_all_entities(self, entity_type: str, entity_class: Type[Any]) -> List[Any]:

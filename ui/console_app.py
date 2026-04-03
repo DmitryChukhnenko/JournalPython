@@ -289,7 +289,7 @@ class ConsoleApp:
         group_id = input_str("\nВведите ID группы для удаления: ")
         
         # Поиск группы по ID
-        group = next((g for g in groups if g.id == group_id), None)
+        group = next((g for g in groups if g.id[:8] == group_id), None)
         
         if not group:
             print(f"\n[ERROR] Группа с ID '{group_id}' не найдена.")
@@ -371,7 +371,7 @@ class ConsoleApp:
         
         subject_id = input_str("\nВведите ID предмета для удаления: ")
         
-        subject = next((s for s in subjects if s.id == subject_id), None)
+        subject = next((s for s in subjects if s.id[:8] == subject_id), None)
         
         if not subject:
             print(f"\n[ERROR] Предмет с ID '{subject_id}' не найден.")
@@ -453,7 +453,7 @@ class ConsoleApp:
         
         classroom_id = input_str("\nВведите ID аудитории для удаления: ")
         
-        classroom = next((c for c in classrooms if c.id == classroom_id), None)
+        classroom = next((c for c in classrooms if c.id[:8] == classroom_id), None)
         
         if not classroom:
             print(f"\n[ERROR] Аудитория с ID '{classroom_id}' не найдена.")
@@ -535,7 +535,7 @@ class ConsoleApp:
         
         teacher_id = input_str("\nВведите ID преподавателя для удаления: ")
         
-        teacher = next((t for t in teachers if t.id == teacher_id), None)
+        teacher = next((t for t in teachers if t.id[:8] == teacher_id), None)
         
         if not teacher:
             print(f"\n[ERROR] Преподаватель с ID '{teacher_id}' не найден.")
@@ -810,20 +810,25 @@ class ConsoleApp:
         
         headers = ["ID", "День", "Время", "Группа", "Предмет", "Преподаватель", "Аудитория"]
         rows = []
-        
+
         for slot in sorted_slots:
-            # Получаем имена сущностей через менеджер (упрощенно - только ID)
+            # Получаем имена сущностей через менеджер
+            group = self._manager.get_group_by_id(slot.group_id)
+            subject = self._manager.get_subject_by_id(slot.subject_id)
+            teacher = self._manager.get_teacher_by_id(slot.teacher_id)
+            classroom = self._manager.get_classroom_by_id(slot.classroom_id)
+
             day_name = self.DAYS_OF_WEEK[slot.day_of_week] if 1 <= slot.day_of_week <= 7 else "?"
-            
+
             rows.append([
                 slot.id[:8],
                 day_name,
                 f"{slot.start_time}-{slot.end_time}",
-                slot.group_id[:8],
-                slot.subject_id[:8],
-                slot.teacher_id[:8],
-                slot.classroom_id[:8]
+                group.name if group else slot.group_id[:8],
+                subject.name if subject else slot.subject_id[:8],
+                teacher.name if teacher else slot.teacher_id[:8],
+                classroom.number if classroom else slot.classroom_id[:8]
             ])
-        
+
         print_table(headers, rows)
         print()

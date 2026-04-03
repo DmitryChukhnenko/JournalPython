@@ -173,7 +173,8 @@ class ScheduleManager:
             end_time=end_time
         )
         
-        self._slots.append(new_slot)
+        self._slots.append(new_slot)        
+        self._save_all()
         return new_slot
     
     def remove_slot(self, slot_id: str) -> bool:
@@ -187,8 +188,9 @@ class ScheduleManager:
             True, если занятие удалено, False если не найдено.
         """
         for i, slot in enumerate(self._slots):
-            if slot.id == slot_id:
+            if slot.id[:8] == slot_id:
                 del self._slots[i]
+                self._save_all()
                 return True
         return False
     
@@ -237,17 +239,7 @@ class ScheduleManager:
         """
         return deepcopy(self._slots)
     
-    def get_state(self) -> Dict[str, Any]:
-        """
-        Возвращает текущее состояние расписания для сохранения.
-        
-        Returns:
-            Словарь с ключом 'schedule' и списком словарей занятий.
-        """
-        return {
-            'schedule': [slot.to_dict() for slot in self._slots]
-        }
-    
+   
     def check_conflicts(self) -> List[str]:
         """
         Проверяет все занятия на наличие конфликтов между собой.
@@ -283,7 +275,7 @@ class ScheduleManager:
             Занятие или None, если не найдено.
         """
         for slot in self._slots:
-            if slot.id == slot_id:
+            if slot.id[:8] == slot_id:
                 return slot
         return None
     
@@ -308,7 +300,7 @@ class ScheduleManager:
     def remove_group(self, group_id: str) -> bool:
         """Удаляет группу по ID."""
         for i, g in enumerate(self._groups):
-            if g.id == group_id:
+            if g.id[:8] == group_id:
                 del self._groups[i]
                 self._save_all()
                 return True
@@ -330,7 +322,7 @@ class ScheduleManager:
     def remove_subject(self, subject_id: str) -> bool:
         """Удаляет предмет по ID."""
         for i, s in enumerate(self._subjects):
-            if s.id == subject_id:
+            if s.id[:8] == subject_id:
                 del self._subjects[i]
                 self._save_all()
                 return True
@@ -352,7 +344,7 @@ class ScheduleManager:
     def remove_teacher(self, teacher_id: str) -> bool:
         """Удаляет преподавателя по ID."""
         for i, t in enumerate(self._teachers):
-            if t.id == teacher_id:
+            if t.id[:8] == teacher_id:
                 del self._teachers[i]
                 self._save_all()
                 return True
@@ -374,7 +366,7 @@ class ScheduleManager:
     def remove_classroom(self, classroom_id: str) -> bool:
         """Удаляет аудиторию по ID."""
         for i, c in enumerate(self._classrooms):
-            if c.id == classroom_id:
+            if c.id[:8] == classroom_id:
                 del self._classrooms[i]
                 self._save_all()
                 return True
