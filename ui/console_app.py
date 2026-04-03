@@ -278,6 +278,7 @@ class ConsoleApp:
     def _delete_group(self) -> None:
         """Удаляет группу по ID."""
         groups = self._manager.get_all_groups()
+        slots = self._manager.get_all()
         
         if not groups:
             print("\n[WARNING] Нет групп для удаления.")
@@ -293,6 +294,8 @@ class ConsoleApp:
         
         if not group:
             print(f"\n[ERROR] Группа с ID '{group_id}' не найдена.")
+        elif (any(slot.group_id == group.id for slot in slots)):
+            print(f"\n[ERROR] Группа '{group.name}' не может быть удалена, так как она используется в расписании.")
         elif confirm_action(f"Удалить группу '{group.name}'?"):
             try:
                 if self._manager.remove_group(group_id):
@@ -361,6 +364,7 @@ class ConsoleApp:
     def _delete_subject(self) -> None:
         """Удаляет предмет по ID."""
         subjects = self._manager.get_all_subjects()
+        slots = self._manager.get_all()
         
         if not subjects:
             print("\n[WARNING] Нет предметов для удаления.")
@@ -375,6 +379,8 @@ class ConsoleApp:
         
         if not subject:
             print(f"\n[ERROR] Предмет с ID '{subject_id}' не найден.")
+        elif (any(slot.subject_id == subject.id for slot in slots)):
+            print(f"\n[ERROR] Предмет '{subject.name}' не может быть удален, так как он используется в расписании.")
         elif confirm_action(f"Удалить предмет '{subject.name}'?"):
             try:
                 if self._manager.remove_subject(subject_id):
@@ -443,6 +449,7 @@ class ConsoleApp:
     def _delete_classroom(self) -> None:
         """Удаляет аудиторию по ID."""
         classrooms = self._manager.get_all_classrooms()
+        slots = self._manager.get_all()
         
         if not classrooms:
             print("\n[WARNING] Нет аудиторий для удаления.")
@@ -456,7 +463,9 @@ class ConsoleApp:
         classroom = next((c for c in classrooms if c.id[:8] == classroom_id), None)
         
         if not classroom:
-            print(f"\n[ERROR] Аудитория с ID '{classroom_id}' не найдена.")
+            print(f"\n[ERROR] Аудитория с ID '{classroom_id}' не найдена.")        
+        elif (any(slot.classroom_id == classroom_id.id for slot in slots)):
+            print(f"\n[ERROR] Аудитория '{classroom.name}' не может быть удалена, так как она используется в расписании.")
         elif confirm_action(f"Удалить аудиторию '{classroom.number}'?"):
             try:
                 if self._manager.remove_classroom(classroom_id):
@@ -525,6 +534,7 @@ class ConsoleApp:
     def _delete_teacher(self) -> None:
         """Удаляет преподавателя по ID."""
         teachers = self._manager.get_all_teachers()
+        slots = self._manager.get_all()
         
         if not teachers:
             print("\n[WARNING] Нет преподавателей для удаления.")
@@ -539,6 +549,8 @@ class ConsoleApp:
         
         if not teacher:
             print(f"\n[ERROR] Преподаватель с ID '{teacher_id}' не найден.")
+        elif (any(slot.teacher_id == teacher.id for slot in slots)):
+            print(f"\n[ERROR] Преподаватель '{teacher.name}' не может быть удален, так как он используется в расписании.")        
         elif confirm_action(f"Удалить преподавателя '{teacher.name}'?"):
             try:
                 if self._manager.remove_teacher(teacher_id):
